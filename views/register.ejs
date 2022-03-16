@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="css/login.css" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="scripts/user.js"></script>
+</head>
+
+<body>
+    <div class="login">
+        <h1>
+            <%= header %>
+        </h1>
+
+        <form id="form1">
+            <input type="text" name="username" id="username" placeholder="Username" required="required" />
+            <input type="text" name="email" id="email" placeholder="E-Mail" required="required" />
+            <label  class="emailExist" style=" color: red; display: none; margin-bottom: 7px; font-size: 10px;" for="email"><em>E-mail already exist!</em></label>
+            <input type="password" name="password" id="password" placeholder="Password" required="required" />
+            <input type="password" name="cpassword" id="cpassword" placeholder="Confirm Password" required="required" />
+            <button id="submit" type="submit" class="btn btn-primary btn-block btn-large">
+                Sign Up
+            </button>
+            <!-- <input type="submit" value="sdjhk"> -->
+        </form>
+    </div>
+</body>
+
+</html>
