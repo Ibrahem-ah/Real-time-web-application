@@ -2,7 +2,7 @@
 const UserBlog = require('../models/user');
 
 exports.getLoginPage = (req, res, next) => {
-  res.render('login');
+  res.render('login', { test: '0' });
 };
 exports.postLoginPage = async (req, res, next) => {
   try {
@@ -10,9 +10,8 @@ exports.postLoginPage = async (req, res, next) => {
     const password = req.body.password;
 
     const user = await UserBlog.findOne({ email: email, password: password });
-    console.log(user);
+
     if (user) {
-      console.log('test');
       res.send({});
     } else {
       throw 'Email or Password is Incorrect';
