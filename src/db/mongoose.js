@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
+require('dotenv').config();
 
 mongoose
   .connect(
-    'mongodb+srv://IAH:IjGuSdDDV4j0n0SD@cluster0.csbz5.mongodb.net/paymentsTracker?retryWrites=true&w=majority'
+    process.env.MONGO_URI
   )
   .then((result) => {
     console.log('http://localhost:3000');

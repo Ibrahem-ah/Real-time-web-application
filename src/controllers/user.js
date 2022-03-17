@@ -1,53 +1,50 @@
 //import the db schema in here
 const UserBlog = require('../models/user');
+const bcrypt = require('bcryptjs');
 
 exports.getLoginPage = (req, res, next) => {
   res.render('login', { test: '0' });
 };
+
 exports.postLoginPage = async (req, res, next) => {
   try {
-    const email = req.body.email;
-    const password = req.body.password;
+    const { email, password } = req.body;
 
-    const user = await UserBlog.findOne({ email: email, password: password });
+    const user = await UserBlog.findOne({ email });
 
-    if (user) {
+    if (user && (await bcrypt.compare(password, user.password))) {
       res.send({});
     } else {
-      throw 'Email or Password is Incorrect';
+      throw 'Email or Password is Incorrect!';
     }
   } catch (err) {
     res.send({ response: err });
   }
 };
 
-exports.getSignUp = (req, res, next) => {
+exports.getRegister = (req, res, next) => {
   res.render('register', { header: 'Sign Up' });
 };
 
-exports.postSignUp = async (req, res, next) => {
-  const username = req.body.username;
-  const email = req.body.email;
-  const password = req.body.password;
-  const cpassword = req.body.cpassword;
+exports.postRegister = async (req, res, next) => {
+  const { username, email, password, cpassword } = req.body;
 
-  //   const cpassword = req.body.cpassword;
   try {
     const user = await UserBlog.findOne({ email: email });
-
     if (!user) {
+      encryptedPassword = await bcrypt.hash(password, 10);
+
       await new UserBlog({
         username: username,
-        email: email,
-        password: password,
+        email: email.toLowerCase(),
+        password: encryptedPassword,
       }).save();
 
       res.send({});
     } else {
-      throw 'Email already exist!';
+      throw 'Email already exist. Please Login';
     }
   } catch (err) {
-    // console.log(err);
     res.send({ response: err });
   }
 };
@@ -55,22 +52,3 @@ exports.postSignUp = async (req, res, next) => {
 exports.getHomepage = async (req, res, next) => {
   res.render('homepage');
 };
-
-// exports.loginPage('/login', (req, res) => {
-//   const username = req.body.email;
-//   console.log(username);
-
-//   res.render('homepage');
-// });
-
-// app.get('/register', (req, res) => {
-//   res.render('register');
-// });
-
-// app.post('/register', (req, res) => {
-//
-
-//   console.log(username + email + password + cpassword);
-
-//   res.render('register');
-// });

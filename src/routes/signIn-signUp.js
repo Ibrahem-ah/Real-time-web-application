@@ -5,8 +5,8 @@ const user = require('../controllers/user');
 router.get('/', user.getLoginPage);
 router.post('/login', user.postLoginPage);
 
-router.get('/register', user.getSignUp);
-router.post('/register', user.postSignUp);
+router.get('/register', user.getRegister);
+router.post('/register', user.postRegister);
 
 router.get('/homepage', user.getHomepage);
 
