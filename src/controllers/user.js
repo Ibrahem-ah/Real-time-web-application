@@ -29,23 +29,35 @@ exports.getRegister = (req, res, next) => {
 exports.postRegister = async (req, res, next) => {
   const { username, email, password, cpassword } = req.body;
 
+  const invalid = {};
   try {
+    if (password != cpassword) {
+      invalid.password = 'Passwords are not the same!';
+    }
     const user = await UserBlog.findOne({ email: email });
     if (!user) {
-      encryptedPassword = await bcrypt.hash(password, 10);
+      if (!invalid.password) {
+        encryptedPassword = await bcrypt.hash(password, 10);
 
-      await new UserBlog({
-        username: username,
-        email: email.toLowerCase(),
-        password: encryptedPassword,
-      }).save();
+        await new UserBlog({
+          username: username,
+          email: email.toLowerCase(),
+          password: encryptedPassword,
+        }).save();
 
-      res.send({});
+        return res.send({});
+      }
     } else {
-      throw 'Email already exist. Please Login';
+      invalid.email = 'Email already exist. Please Login';
+      // throw 'Email already exist. Please Login';
+    }
+
+    if (Object.keys(invalid).length > 0) {
+      throw ' ';
     }
   } catch (err) {
-    res.send({ response: err });
+    // res.send({ invalid });
+    res.send({ emailExist: invalid.email, pswExist: invalid.password });
   }
 };
 

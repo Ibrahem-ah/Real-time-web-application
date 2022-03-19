@@ -21,10 +21,7 @@ $(document).ready(function () {
             ).insertAfter('#password');
           }
 
-          // myVar = 1
-          // $('.emailExist').css('display', 'block');
-          // $('.emailExist').css('margin-bottom', '15px');
-          // $('h1').html(`Hello ${res.response}`);
+       
         } else {
           location.href = '/homepage';
         }
