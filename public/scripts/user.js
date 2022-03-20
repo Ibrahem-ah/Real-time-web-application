@@ -13,7 +13,7 @@ $(document).ready(function () {
       data: { username, email, password, cpassword },
       success: function (res) {
         if (Object.keys(res).length > 0) {
-          if (res.emailExist || Object.keys($('#emailExist')).length > 1) {
+          if (res.emailExist || $('#emailExist').length > 0) {
             var elementExist = document.getElementById('emailExist');
             if (!elementExist) {
               $(
@@ -25,7 +25,7 @@ $(document).ready(function () {
               $('#emailExist').html(res.emailExist);
             }
           }
-          if (res.pswExist || Object.keys($('#pswExist')).length > 1) {
+          if (res.pswExist || $('#pswExist').length > 0) {
             var elementExist = document.getElementById('pswExist');
             if (!elementExist) {
               $(

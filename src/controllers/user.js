@@ -29,18 +29,14 @@ exports.getRegister = (req, res, next) => {
 exports.postRegister = async (req, res, next) => {
   const { username, email, password, cpassword } = req.body;
 
-  console.log(req.body);
-  console.log(email);
-
   const invalid = {};
   try {
     if (password != cpassword) {
       invalid.password = 'Passwords are not the same!';
     }
-    const user = await UserBlog.findOne({ email: email });
+    const user = await UserBlog.findOne({ email: email.toLowerCase() });
 
     if (!user && email) {
-      // console.log('1');
       if (!invalid.password) {
         encryptedPassword = await bcrypt.hash(password, 10);
 
@@ -62,8 +58,6 @@ exports.postRegister = async (req, res, next) => {
       throw ' ';
     }
   } catch (err) {
-    // res.send({ invalid });
-
     res.send({ emailExist: invalid.email, pswExist: invalid.password });
   }
 };
