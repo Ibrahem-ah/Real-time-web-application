@@ -6,8 +6,6 @@ $(document).ready(function () {
     const password = $('#password').val();
     const cpassword = $('#cpassword').val();
 
-    // console.log(username);
-
     $.ajax({
       url: '/register',
       method: 'post',
@@ -15,32 +13,28 @@ $(document).ready(function () {
       data: { username, email, password, cpassword },
       success: function (res) {
         if (Object.keys(res).length > 0) {
-          
-          if (res.emailExist || Object.keys($('#emailExist')).length > 0) {
+          if (res.emailExist || Object.keys($('#emailExist')).length > 1) {
             var elementExist = document.getElementById('emailExist');
             if (!elementExist) {
               $(
-                `<label> <em id='emailExist'>${res.emailExist}</em> </label>;`
+                `<label class='a1'> <em id='emailExist'>${res.emailExist}</em> </label>;`
               ).insertAfter('#email');
             } else if (!res.emailExist) {
-              
               $('#emailExist').remove();
+            } else {
+              $('#emailExist').html(res.emailExist);
             }
-
-            // elementExist.parentNode.removeChild(emailExist);
           }
-          if (res.pswExist) {
+          if (res.pswExist || Object.keys($('#pswExist')).length > 1) {
             var elementExist = document.getElementById('pswExist');
             if (!elementExist) {
               $(
-                `<label> <em id='pswExist'>${res.pswExist}</em> </label>;`
+                `<label class='a1'> <em id='pswExist'>${res.pswExist}</em> </label>;`
               ).insertAfter('#cpassword');
+            } else if (!res.pswExist) {
+              $('#pswExist').remove();
             }
           }
-
-          //How to add class name
-          // $('#password').css('margin-bottom', '0px');
-
         } else {
           location.href = '/homepage';
         }

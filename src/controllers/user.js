@@ -1,6 +1,6 @@
+const bcrypt = require('bcryptjs');
 //import the db schema in here
 const UserBlog = require('../models/user');
-const bcrypt = require('bcryptjs');
 
 exports.getLoginPage = (req, res, next) => {
   res.render('login', { test: '0' });
@@ -29,13 +29,18 @@ exports.getRegister = (req, res, next) => {
 exports.postRegister = async (req, res, next) => {
   const { username, email, password, cpassword } = req.body;
 
+  console.log(req.body);
+  console.log(email);
+
   const invalid = {};
   try {
     if (password != cpassword) {
       invalid.password = 'Passwords are not the same!';
     }
     const user = await UserBlog.findOne({ email: email });
-    if (!user) {
+
+    if (!user && email) {
+      // console.log('1');
       if (!invalid.password) {
         encryptedPassword = await bcrypt.hash(password, 10);
 
@@ -47,9 +52,10 @@ exports.postRegister = async (req, res, next) => {
 
         return res.send({});
       }
+    } else if (!email) {
+      invalid.email = 'Please enter an email';
     } else {
       invalid.email = 'Email already exist. Please Login';
-      // throw 'Email already exist. Please Login';
     }
 
     if (Object.keys(invalid).length > 0) {
@@ -57,6 +63,7 @@ exports.postRegister = async (req, res, next) => {
     }
   } catch (err) {
     // res.send({ invalid });
+
     res.send({ emailExist: invalid.email, pswExist: invalid.password });
   }
 };
