@@ -223,7 +223,7 @@ input:focus {
     0 1px 1px rgba(255, 255, 255, 0.2);
 }
 
-.a1 {
+.errMessage {
   display: block;
   color: gold;
   font-size: 12px;
@@ -231,11 +231,4 @@ input:focus {
   margin-bottom: 3px;
 }
 
-/* #pswExist,
-#emailExist {
-  display: block;
-  color: gold;
-  font-size: 12px;
-  margin-top: 3px;
-  margin-bottom: 10px;
-} */
+

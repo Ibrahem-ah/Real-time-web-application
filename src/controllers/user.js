@@ -1,8 +1,8 @@
 const bcrypt = require('bcryptjs');
-//import the db schema in here
 const UserBlog = require('../models/user');
 
 exports.getLoginPage = (req, res, next) => {
+  res.cookie('auth_token', '');
   res.render('login', { test: '0' });
 };
 
@@ -13,6 +13,8 @@ exports.postLoginPage = async (req, res, next) => {
     const user = await UserBlog.findOne({ email });
 
     if (user && (await bcrypt.compare(password, user.password))) {
+      var token = await user.generateAuthToken();
+
       res.send({});
     } else {
       throw 'Email or Password is Incorrect!';
@@ -40,11 +42,14 @@ exports.postRegister = async (req, res, next) => {
       if (!invalid.password) {
         encryptedPassword = await bcrypt.hash(password, 10);
 
-        await new UserBlog({
+        const user = await new UserBlog({
           username: username,
           email: email.toLowerCase(),
           password: encryptedPassword,
         }).save();
+
+        var token = await user.generateAuthToken();
+        res.cookie('auth_token', token);
 
         return res.send({});
       }

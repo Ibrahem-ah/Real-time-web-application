@@ -1,10 +1,14 @@
 const express = require('express');
+const CookieParser = require('cookie-parser');
+
 require('./db/mongoose');
 require('dotenv').config();
 
 const routes = require('./routes/signIn-signUp');
 
 const app = express();
+app.use(CookieParser());
+
 const port = process.env.PORT;
 
 app.use(express.urlencoded({ extended: true }));

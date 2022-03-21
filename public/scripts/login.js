@@ -11,17 +11,14 @@ $(document).ready(function () {
       data: { email, password },
       success: function (res) {
         if (res.response) {
-          //How to add class name
           $('#password').css('margin-bottom', '0px');
 
           var elementExist = document.getElementById('exist');
           if (!elementExist) {
             $(
-              `<label> <em id='exist'>${res.response}</em> </label>;`
+              `<label class='errMessage'> <em id='exist'>${res.response}</em> </label>;`
             ).insertAfter('#password');
           }
-
-       
         } else {
           location.href = '/homepage';
         }

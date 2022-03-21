@@ -17,7 +17,7 @@ $(document).ready(function () {
             var elementExist = document.getElementById('emailExist');
             if (!elementExist) {
               $(
-                `<label class='a1'> <em id='emailExist'>${res.emailExist}</em> </label>;`
+                `<label class='errMessage'> <em id='emailExist'>${res.emailExist}</em> </label>;`
               ).insertAfter('#email');
             } else if (!res.emailExist) {
               $('#emailExist').remove();
@@ -29,7 +29,7 @@ $(document).ready(function () {
             var elementExist = document.getElementById('pswExist');
             if (!elementExist) {
               $(
-                `<label class='a1'> <em id='pswExist'>${res.pswExist}</em> </label>;`
+                `<label class='errMessage'> <em id='pswExist'>${res.pswExist}</em> </label>;`
               ).insertAfter('#cpassword');
             } else if (!res.pswExist) {
               $('#pswExist').remove();
