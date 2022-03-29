@@ -14,6 +14,7 @@ exports.postLoginPage = async (req, res, next) => {
 
     if (user && (await bcrypt.compare(password, user.password))) {
       var token = await user.generateAuthToken();
+      res.cookie('auth_token', token);
 
       res.send({});
     } else {

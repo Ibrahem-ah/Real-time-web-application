@@ -1,12 +1,16 @@
 const express = require('express');
+const app = express();
+
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
 const CookieParser = require('cookie-parser');
 
 require('./db/mongoose');
 require('dotenv').config();
 
-const routes = require('./routes/signIn-signUp');
+const routes = require('./routes/user');
 
-const app = express();
+
 app.use(CookieParser());
 
 const port = process.env.PORT;
@@ -25,6 +29,14 @@ app.get('*', function (req, res) {
   res.send('ERROR!!');
 });
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+
+let count = 0;
+
+io.on('connection', (socket) => {
+  console.log('New WebSocket connection');
+  socket.emit('countUpdated')
+});
+
+server.listen(port, () => {
+  console.log(`Server is up on port ${port}`);
 });
