@@ -6,13 +6,22 @@ const socket = io();
 // const $sendLocationButton = $('#share-location');
 // var a = $('#message-template').html();
 
-
 ///////////////////////////HERE ///////////////////////////////////////////////////
 socket.on('message', (message) => {
   console.log(message);
-
   const html = Mustache.render($('#message-template').html(), {
-    message,
+    message: message.text,
+    createdAt: moment(message.createdAt).format('h:mm a'),
+  });
+  $('#messages').append(html);
+});
+
+socket.on('LocationMessage', (message) => {
+  // $('#messages').append('<p><a>hello there</a><p>');
+
+  const html = Mustache.render($('#location-message-template').html(), {
+    url: message.url,
+    createdAt: moment(message.createdAt).format('h:mm a'),
   });
   $('#messages').append(html);
 });

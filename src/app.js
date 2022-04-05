@@ -5,6 +5,10 @@ const io = require('socket.io')(server);
 const Filter = require('bad-words');
 const CookieParser = require('cookie-parser');
 
+const {
+  generateMessage,
+  generateLocationMessage,
+} = require('./utils/messages');
 require('./db/mongoose');
 require('dotenv').config();
 
@@ -32,8 +36,8 @@ app.get('*', function (req, res) {
 io.on('connection', (socket) => {
   console.log('New WebSocket connection');
 
-  socket.emit('message', 'Welcome!');
-  socket.broadcast.emit('message', 'A new user has joined!');
+  socket.emit('message', generateMessage('welcome'));
+  socket.broadcast.emit('message', generateMessage('A new user has joined!'));
 
   socket.on('sendMessage', (message, callback) => {
     const filter = new Filter();
@@ -42,22 +46,23 @@ io.on('connection', (socket) => {
       return callback('Profanity is not allowed!');
     }
 
-    io.emit('message', message);
+    io.emit('message', generateMessage(message));
     callback();
   });
 
   socket.on('sendLocation', (coords, callback) => {
     io.emit(
-      'message',
-      `https://maps.google.com/?q=${coords.latitude},${coords.longitude}`
+      'LocationMessage',
+      generateLocationMessage(
+        `https://maps.google.com/?q=${coords.latitude},${coords.longitude}`
+      )
     );
 
     callback();
-    // io.emit('message', `Location: ${coords.latitude} ${coords.longitude}`);
   });
 
   socket.on('disconnect', () => {
-    io.emit('message', 'A user has left!');
+    io.emit('message', generateMessage('A user has left!'));
   });
 });
 
