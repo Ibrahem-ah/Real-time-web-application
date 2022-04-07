@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Homepage</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  <link rel="icon" href="/img/favicon.png" />
+  <link rel="stylesheet" href="/css/styles.min.css" />
+</head>
+
+<body>
+
+  <div class="chat">
+    <div class="chat__sidebar"></div>
+    <div class="chat__main">
+      <div id="messages" class="chat__messages"></div>
+      <div class="compose">
+        <form id="form1">
+          <input name="message" placeholder="Type here" required />
+          <button type="submit">Send</button>
+        </form>
+        <button id="share-location">Share location</button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <script id="message-template" type="text/html">
+      <div class="message">
+        <p>
+          <span class="message__name">Some User Name</span>
+          <span class="message__meta">{{createdAt}}</span>
+        </p>
+        <p>{{message}}</p>
+      </div>
+    </script>
+
+  <script id="location-message-template" type="text/html">
+      <div class="message">
+          <p>
+              <span class="message__name">Some User Name</span>
+              <span class="message__meta">{{createdAt}}</span>
+          </p>
+          <p><a href="{{url}}" target="_blank">My Location</a></p>
+      </div>
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.0/mustache.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/query-string/7.1.1/index.js"></script> -->
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/scripts/chat.js"></script>
+</body>
+
+</html>

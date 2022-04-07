@@ -8,7 +8,6 @@ const socket = io();
 
 ///////////////////////////HERE ///////////////////////////////////////////////////
 socket.on('message', (message) => {
-  console.log(message);
   const html = Mustache.render($('#message-template').html(), {
     message: message.text,
     createdAt: moment(message.createdAt).format('h:mm a'),

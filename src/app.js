@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 app.set('view engine', 'ejs');
-app.set('views', 'views'); //the second argument is the file location
+app.set('views', 'public/views'); //the second argument is the file location
 
 app.use(routes);
 
