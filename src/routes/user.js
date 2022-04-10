@@ -11,5 +11,6 @@ router.get('/register', user.getRegister);
 router.post('/register', user.postRegister);
 
 router.get('/homepage', auth, user.getHomepage);
+router.get('/chat', auth, user.getChat);
 
 module.exports = router;

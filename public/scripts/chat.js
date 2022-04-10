@@ -7,6 +7,8 @@ const socket = io();
 // var a = $('#message-template').html();
 
 ///////////////////////////HERE ///////////////////////////////////////////////////
+var { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true });
+
 socket.on('message', (message) => {
   const html = Mustache.render($('#message-template').html(), {
     message: message.text,
@@ -61,3 +63,5 @@ $('#share-location').on('click', () => {
     );
   });
 });
+
+socket.emit('join', {username,room});

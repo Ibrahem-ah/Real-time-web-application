@@ -36,8 +36,12 @@ app.get('*', function (req, res) {
 io.on('connection', (socket) => {
   console.log('New WebSocket connection');
 
-  socket.emit('message', generateMessage('welcome'));
-  socket.broadcast.emit('message', generateMessage('A new user has joined!'));
+  socket.on('join', ({ username, room }) => {
+    socket.join(room);
+
+    socket.emit('message', generateMessage('welcome'));
+    socket.broadcast.to(room).emit('message', generateMessage(`${username} has joined!`));
+  });
 
   socket.on('sendMessage', (message, callback) => {
     const filter = new Filter();
@@ -45,8 +49,8 @@ io.on('connection', (socket) => {
     if (filter.isProfane(message)) {
       return callback('Profanity is not allowed!');
     }
-
-    io.emit('message', generateMessage(message));
+// console.log(room);
+    io.to('1').emit('message', generateMessage(message));
     callback();
   });
 

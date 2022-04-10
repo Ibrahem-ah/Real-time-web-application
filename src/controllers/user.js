@@ -1,6 +1,10 @@
 const bcrypt = require('bcryptjs');
 const UserBlog = require('../models/user');
 
+exports.getChat = (req, res, next) => {
+  res.render('chat')
+};
+
 exports.getLoginPage = (req, res, next) => {
   res.cookie('auth_token', '');
   res.render('login', { test: '0' });
