@@ -9,7 +9,7 @@
 
 	npm install
 
-**3- Create .enf file and add the port number and your MongoDB URI**
+**3- Create .enf file to add the port number and your MongoDB URI**
 
     PORT = 3000
     MONGO_URI = ''
