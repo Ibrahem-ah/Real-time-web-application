@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const UserBlog = require('../models/user');
 
 exports.getChat = (req, res, next) => {
-  res.render('chat')
+  res.render('chat', { user: req.user });
 };
 
 exports.getLoginPage = (req, res, next) => {

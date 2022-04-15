@@ -6,11 +6,23 @@ const socket = io();
 // const $sendLocationButton = $('#share-location');
 // var a = $('#message-template').html();
 
+const username = $('#username').val(); //get username using ejs
+
+// function getCookie(name) {
+//   const value = `; ${document.cookie}`;
+//   const parts = value.split(`; ${name}=`);
+//   if (parts.length === 2) return parts.pop().split(';').shift();
+// }
+// const userToken = getCookie('auth_token');
+
 ///////////////////////////HERE ///////////////////////////////////////////////////
-var { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true });
+var { displayname, room } = Qs.parse(location.search, {
+  ignoreQueryPrefix: true,
+});
 
 socket.on('message', (message) => {
   const html = Mustache.render($('#message-template').html(), {
+    username: message.username,
     message: message.text,
     createdAt: moment(message.createdAt).format('h:mm a'),
   });
@@ -33,9 +45,10 @@ $('#form1').on('submit', (e) => {
   $('button').attr('disabled', 'true');
 
   const message = $('input').val();
-  $('input').val('').focus();
+  // console.log(username);
+  $('#messageInput').val('').focus();
 
-  socket.emit('sendMessage', message, (message) => {
+  socket.emit('sendMessage', message, username, (message) => {
     $('button').removeAttr('disabled');
     if (message) {
       return console.log(message);
@@ -64,4 +77,4 @@ $('#share-location').on('click', () => {
   });
 });
 
-socket.emit('join', {username,room});
+socket.emit('join', { displayname, room, username });

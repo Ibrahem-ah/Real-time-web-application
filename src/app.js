@@ -13,6 +13,7 @@ require('./db/mongoose');
 require('dotenv').config();
 
 const routes = require('./routes/user');
+const { addUser, getUsersInRoom, removeUser } = require('./utils/users');
 
 app.use(CookieParser());
 
@@ -27,30 +28,32 @@ app.set('views', 'public/views'); //the second argument is the file location
 app.use(routes);
 
 app.get('*', function (req, res) {
-  // res.status(404).send('404 Page notfound');
-
-  res.send('ERROR!!');
+  res.status(404).send('404 Page not found!');
 });
 
-/////////////////////////////////-- Socket.io --////////////////////////////////////////////
 io.on('connection', (socket) => {
   console.log('New WebSocket connection');
 
-  socket.on('join', ({ username, room }) => {
+  socket.on('join', async ({ displayname, room, username }) => {
+    addUser(room, username);
+    getUsersInRoom(room);
+    socket.username = username;
+
     socket.join(room);
 
-    socket.emit('message', generateMessage('welcome'));
-    socket.broadcast.to(room).emit('message', generateMessage(`${username} has joined!`));
+    socket.emit('message', generateMessage('welcome', 'Bot'));
+    socket.broadcast
+      .to(room)
+      .emit('message', generateMessage('has joined!', username));
   });
 
-  socket.on('sendMessage', (message, callback) => {
+  socket.on('sendMessage', (message, username, callback) => {
     const filter = new Filter();
 
     if (filter.isProfane(message)) {
       return callback('Profanity is not allowed!');
     }
-// console.log(room);
-    io.to('1').emit('message', generateMessage(message));
+    io.to('1').emit('message', generateMessage(message, username));
     callback();
   });
 
@@ -65,8 +68,16 @@ io.on('connection', (socket) => {
     callback();
   });
 
-  socket.on('disconnect', () => {
-    io.emit('message', generateMessage('A user has left!'));
+  socket.on('disconnect', async () => {
+    const user = await removeUser(socket.username);
+    if (user) {
+      console.log(user[0].room);
+
+      io.to(user[0].room).emit(
+        'message',
+        generateMessage('has left!', user[1].user)
+      );
+    }
   });
 });
 
