@@ -29,15 +29,15 @@ const getUsersInRoom = async (room) => {
 
 const removeUser = async (user) => {
   try {
-    const test1 = await RoomBlog.findOne({ 'users.user': user });
-    const userId = test1.users.find((a) => {
+    const room = await RoomBlog.findOne({ 'users.user': user });
+    const userId = room.users.find((a) => {
       if (a.user == user) {
         return a._id;
       }
     });
-    await test1.users.id(userId._id).remove();
-    await test1.save();
-    return [test1, userId];
+    await room.users.id(userId._id).remove();
+    await room.save();
+    return [room, userId];
   } catch (err) {
     return console.log(err);
     

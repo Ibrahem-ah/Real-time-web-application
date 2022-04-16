@@ -38,6 +38,7 @@ io.on('connection', (socket) => {
     addUser(room, username);
     getUsersInRoom(room);
     socket.username = username;
+    socket.room = room;
 
     socket.join(room);
 
@@ -53,7 +54,10 @@ io.on('connection', (socket) => {
     if (filter.isProfane(message)) {
       return callback('Profanity is not allowed!');
     }
-    io.to('1').emit('message', generateMessage(message, username));
+    io.to(socket.room.toString()).emit(
+      'message',
+      generateMessage(message, username)
+    );
     callback();
   });
 
@@ -71,9 +75,7 @@ io.on('connection', (socket) => {
   socket.on('disconnect', async () => {
     const user = await removeUser(socket.username);
     if (user) {
-      console.log(user[0].room);
-
-      io.to(user[0].room).emit(
+      io.to(user[0].room.toString()).emit(
         'message',
         generateMessage('has left!', user[1].user)
       );
