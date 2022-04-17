@@ -16,18 +16,21 @@ const addUser = async (room, username) => {
       return usera.user === username;
     })
   ) {
-    console.log('user exist in the room');
+    return { error: 'user exist in the room' };
   } else {
     roomExist.users.push({ user: username });
     await roomExist.save();
   }
 };
 
+
 const getUsersInRoom = async (room) => {
-  const room1 = await RoomBlog.findOne({ room: room });
+  const usersInRoom = await RoomBlog.findOne({ room: room });
+  return usersInRoom;
 };
 
 const removeUser = async (user) => {
+  // get the room that the user in the remove it 
   try {
     const room = await RoomBlog.findOne({ 'users.user': user });
     const userId = room.users.find((a) => {
@@ -39,8 +42,7 @@ const removeUser = async (user) => {
     await room.save();
     return [room, userId];
   } catch (err) {
-    return console.log(err);
-    
+    console.log('error removing the user');
   }
 };
 

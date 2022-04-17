@@ -105,7 +105,8 @@ button:disabled {
 }
 
 .message {
-    margin-bottom: 16px
+    margin-bottom: 16px;
+    
 }
 
 .message__name {

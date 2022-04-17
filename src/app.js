@@ -34,18 +34,26 @@ app.get('*', function (req, res) {
 io.on('connection', (socket) => {
   console.log('New WebSocket connection');
 
-  socket.on('join', async ({ displayname, room, username }) => {
-    addUser(room, username);
-    getUsersInRoom(room);
+  socket.on('join', async ({ displayname, room, username }, callback) => {
+    const { error } = (await addUser(room, username)) || {};
+    if (error) {
+      return callback(error);
+    }
+
+    var user = await getUsersInRoom(room);
     socket.username = username;
     socket.room = room;
 
     socket.join(room);
 
-    socket.emit('message', generateMessage('welcome', 'Bot'));
+    socket.emit('message', generateMessage('welcome', 'Admin'));
     socket.broadcast
       .to(room)
       .emit('message', generateMessage('has joined!', username));
+
+    io.to(room).emit('roomData', { room: user.room, users: user.users });
+
+    callback();
   });
 
   socket.on('sendMessage', (message, username, callback) => {
@@ -62,10 +70,11 @@ io.on('connection', (socket) => {
   });
 
   socket.on('sendLocation', (coords, callback) => {
-    io.emit(
+    io.to(socket.room.toString()).emit(
       'LocationMessage',
       generateLocationMessage(
-        `https://maps.google.com/?q=${coords.latitude},${coords.longitude}`
+        `https://maps.google.com/?q=${coords.latitude},${coords.longitude}`,
+        socket.username
       )
     );
 
@@ -79,6 +88,11 @@ io.on('connection', (socket) => {
         'message',
         generateMessage('has left!', user[1].user)
       );
+      const users = await getUsersInRoom(user[0].room.toString());
+      io.to(user[0].room.toString()).emit('roomData', {
+        room: user[0].room.toString(),
+        users: users.users,
+      });
     }
   });
 });

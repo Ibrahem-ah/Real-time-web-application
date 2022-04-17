@@ -31,8 +31,9 @@ socket.on('message', (message) => {
 
 socket.on('LocationMessage', (message) => {
   // $('#messages').append('<p><a>hello there</a><p>');
-
+  console.log(message);
   const html = Mustache.render($('#location-message-template').html(), {
+    username: message.username,
     url: message.url,
     createdAt: moment(message.createdAt).format('h:mm a'),
   });
@@ -77,4 +78,20 @@ $('#share-location').on('click', () => {
   });
 });
 
-socket.emit('join', { displayname, room, username });
+socket.on('roomData', ({ room, users }) => {
+  const html = Mustache.render($('#sidebar-template').html(), {
+    room,
+    users,
+  });
+  $('#sidebar').html(html);
+
+  // console.log(room);
+  // console.log(users);
+});
+
+socket.emit('join', { displayname, room, username }, (error) => {
+  if (error) {
+    alert(error);
+    location.href = '/homepage';
+  }
+});
