@@ -37,7 +37,7 @@ io.on('connection', (socket) => {
   socket.on('join', async ({ displayname, room, username }, callback) => {
     const { error } = (await addUser(room, username)) || {};
     if (error) {
-      return callback(error);
+      // return callback(error);
     }
 
     var user = await getUsersInRoom(room);
