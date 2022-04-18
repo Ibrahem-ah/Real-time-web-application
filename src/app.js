@@ -17,7 +17,7 @@ const { addUser, getUsersInRoom, removeUser } = require('./utils/users');
 
 app.use(CookieParser());
 
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
