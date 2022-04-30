@@ -13,4 +13,6 @@ router.post('/register', user.postRegister);
 router.get('/homepage', auth, user.getHomepage);
 router.get('/chat', auth, user.getChat);
 
+router.post('/uploadImage', auth, user.postUploadImage);
+
 module.exports = router;
