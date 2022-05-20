@@ -7,8 +7,7 @@ const userSchema = new mongoose.Schema({
   password: { type: String },
 
   avatar: {
-    data: Buffer,
-    contentType: String,
+    type: String,
   },
   tokens: [
     {

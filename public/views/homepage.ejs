@@ -11,6 +11,10 @@
   <link rel="icon" href="/img/favicon.png" />
   <link rel="stylesheet" href="/css/styles.min.css" />
 
+
+  <style>
+  
+  </style>
 </head>
 
 <body>
@@ -25,9 +29,8 @@
             <!-- <input name="myImage" type="file" onchange="readURL(this);" /> -->
           </form>
           <figure class="personal-figure">
-            <% if (user.avatar.contentType) { %>
-              <img id="blah" src="data:<%=user.avatar.contentType%>;base64,
-            <%=user.avatar.data.toString('base64')%>" class="personal-avatar" alt="avatar">
+            <% if (user.avatar) { %>
+              <img id="blah" src="../uploads/<%=user.avatar%>" class="personal-avatar" alt="avatar">
               <% } else { %>
                 <img id="blah"
                   src="https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
@@ -42,10 +45,8 @@
       </div>
       <h1>Join</h1>
       <form action="/chat">
-        <label>Display name:</label>
-        <input type="text" name="displayname" placeholder="Display name" required>
         <label>Room</label>
-        <input type="text" name="room" placeholder="Room" required>
+        <input type="number" name="room" placeholder="Room Number" required>
         <button type="submit">Join</button>
       </form>
     </div>

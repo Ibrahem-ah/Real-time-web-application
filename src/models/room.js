@@ -5,6 +5,9 @@ const roomSchema = new mongoose.Schema({
   users: [
     {
       user: { type: String },
+      avatar: {
+        type: String,
+      },
     },
   ],
 });

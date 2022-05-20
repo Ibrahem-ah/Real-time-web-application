@@ -34,13 +34,13 @@ app.get('*', function (req, res) {
 io.on('connection', (socket) => {
   console.log('New WebSocket connection');
 
-  socket.on('join', async ({ displayname, room, username }, callback) => {
+  socket.on('join', async ({ room, username }, callback) => {
     const { error } = (await addUser(room, username)) || {};
     if (error) {
       // return callback(error);
     }
 
-    var user = await getUsersInRoom(room);
+    var roomData = await getUsersInRoom(room);
     socket.username = username;
     socket.room = room;
 
@@ -51,7 +51,9 @@ io.on('connection', (socket) => {
       .to(room)
       .emit('message', generateMessage('has joined!', username));
 
-    io.to(room).emit('roomData', { room: user.room, users: user.users });
+    io.to(room).emit('roomData', { roomData });
+
+    // io.to(room).emit('roomData', { room: user.room, users: user.users });
 
     callback();
   });
@@ -88,10 +90,9 @@ io.on('connection', (socket) => {
         'message',
         generateMessage('has left!', user[1].user)
       );
-      const users = await getUsersInRoom(user[0].room.toString());
+      const roomData = await getUsersInRoom(user[0].room.toString());
       io.to(user[0].room.toString()).emit('roomData', {
-        room: user[0].room.toString(),
-        users: users.users,
+        roomData,
       });
     }
   });

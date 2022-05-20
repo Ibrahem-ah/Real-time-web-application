@@ -6,15 +6,16 @@ const multer = require('multer');
 const storage = multer.diskStorage({
   destination: './public/uploads',
   filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + path.extname(file.originalname);
+    const uniqueSuffix = req.user.username + path.extname(file.originalname);
     cb(null, file.fieldname + '-' + uniqueSuffix);
   },
 });
 const fs = require('fs');
 
-const upload = multer({ storage: storage, limits: { fileSize: 1000000  } }).single(
-  'myImage'
-);
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 1000000 },
+}).single('myImage');
 
 exports.getChat = (req, res, next) => {
   res.render('chat', { user: req.user });
@@ -88,9 +89,6 @@ exports.postRegister = async (req, res, next) => {
 };
 
 exports.getHomepage = async (req, res, next) => {
-  // console.log(typeof req.user.contentType);
-  // console.log(Object.keys(req.user.avatar).length);
-  // console.log(req.user.avatar);
   res.render('homepage', { user: req.user });
 };
 
@@ -99,11 +97,7 @@ exports.postUploadImage = async (req, res, next) => {
     if (err) {
       res.send({ largefile: err.message });
     } else {
-      // console.log(req.user.avatar);
-      req.user.avatar = {
-        data: fs.readFileSync(path.join('public/uploads/' + req.file.filename)),
-        contentType: 'image/png',
-      };
+      req.user.avatar = req.file.filename;
 
       await req.user.save();
       return res.send({});

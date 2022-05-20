@@ -16,7 +16,7 @@ const username = $('#username').val(); //get username using ejs
 // const userToken = getCookie('auth_token');
 
 ///////////////////////////HERE ///////////////////////////////////////////////////
-var { displayname, room } = Qs.parse(location.search, {
+var { room } = Qs.parse(location.search, {
   ignoreQueryPrefix: true,
 });
 
@@ -31,7 +31,7 @@ const autoscroll = () => {
 
   const containerHeight = $messages.scrollHeight;
   const scrollOffset = $messages.scrollTop + visibleHeight;
-  
+
   if (containerHeight - newMessageHeight <= scrollOffset) {
     $messages.scrollTop = $messages.scrollHeight;
   }
@@ -97,18 +97,15 @@ $('#share-location').on('click', () => {
   });
 });
 
-socket.on('roomData', ({ room, users }) => {
+socket.on('roomData', ({ roomData }) => {
   const html = Mustache.render($('#sidebar-template').html(), {
-    room,
-    users,
+    room: roomData.room,
+    users: roomData.users,
   });
   $('#sidebar').html(html);
-
-  // console.log(room);
-  // console.log(users);
 });
 
-socket.emit('join', { displayname, room, username }, (error) => {
+socket.emit('join', { room, username }, (error) => {
   if (error) {
     alert(error);
     location.href = '/homepage';

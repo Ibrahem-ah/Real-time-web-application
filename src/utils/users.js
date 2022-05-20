@@ -1,15 +1,16 @@
-// const UserBlog = require('../models/user');
+const UserBlog = require('../models/user');
 const RoomBlog = require('../models/room');
 
 const jwt = require('jsonwebtoken');
 
 const addUser = async (room, username) => {
   const roomExist = await RoomBlog.findOne({ room: room });
+  const getUserAvatar = await UserBlog.findOne({ username: username });
 
   if (!roomExist) {
     const room1 = await new RoomBlog({
       room: room,
-      users: [{ user: username }],
+      users: [{ user: username, avatar: getUserAvatar.avatar }],
     }).save();
   } else if (
     roomExist.users.find((usera) => {
@@ -18,11 +19,10 @@ const addUser = async (room, username) => {
   ) {
     return { error: 'user exist in the room' };
   } else {
-    roomExist.users.push({ user: username });
+    roomExist.users.push({ user: username, avatar: getUserAvatar.avatar });
     await roomExist.save();
   }
 };
-
 
 const getUsersInRoom = async (room) => {
   const usersInRoom = await RoomBlog.findOne({ room: room });
@@ -30,7 +30,7 @@ const getUsersInRoom = async (room) => {
 };
 
 const removeUser = async (user) => {
-  // get the room that the user in the remove it 
+  // get the room that the user in the remove it
   try {
     const room = await RoomBlog.findOne({ 'users.user': user });
     const userId = room.users.find((a) => {
