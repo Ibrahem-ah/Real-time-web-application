@@ -10,12 +10,28 @@ const storage = multer.diskStorage({
     cb(null, file.fieldname + '-' + uniqueSuffix);
   },
 });
-const fs = require('fs');
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 1000000 },
+  limits: { fileSize: 2500000 },
+  fileFilter: function (req, file, cb) {
+    checkFileType(file, cb);
+  },
 }).single('myImage');
+
+function checkFileType(file, cb) {
+  const fileTypes = /jpeg|jpg|png|gif/;
+
+  const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
+
+  const mimetype = fileTypes.test(file.mimetype);
+
+  if (extname && mimetype) {
+    return cb(null, true);
+  } else {
+    cb('Images only!');
+  }
+}
 
 exports.getChat = (req, res, next) => {
   res.render('chat', { user: req.user });
@@ -58,8 +74,14 @@ exports.postRegister = async (req, res, next) => {
       invalid.password = 'Passwords are not the same!';
     }
     const user = await UserBlog.findOne({ email: email.toLowerCase() });
+    const usernameExist = await UserBlog.findOne({
+      username: username,
+    });
 
-    if (!user && email) {
+    var compare =
+      /^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/;
+
+    if (!user && !usernameExist && email.match(compare)) {
       if (!invalid.password) {
         encryptedPassword = await bcrypt.hash(password, 10);
 
@@ -76,15 +98,25 @@ exports.postRegister = async (req, res, next) => {
       }
     } else if (!email) {
       invalid.email = 'Please enter an email';
-    } else {
+    } else if (!email.match(compare)) {
+      invalid.email = 'Please enter a valid email';
+    } else if (user) {
       invalid.email = 'Email already exist. Please Login';
+    }
+
+    if (usernameExist) {
+      invalid.username = 'username already exist';
     }
 
     if (Object.keys(invalid).length > 0) {
       throw ' ';
     }
   } catch (err) {
-    res.send({ emailExist: invalid.email, pswExist: invalid.password });
+    res.send({
+      emailExist: invalid.email,
+      pswExist: invalid.password,
+      usernameExist: invalid.username,
+    });
   }
 };
 
@@ -94,13 +126,16 @@ exports.getHomepage = async (req, res, next) => {
 
 exports.postUploadImage = async (req, res, next) => {
   upload(req, res, async (err) => {
-    if (err) {
-      res.send({ largefile: err.message });
-    } else {
-      req.user.avatar = req.file.filename;
-
-      await req.user.save();
-      return res.send({});
+    try {
+      if (err) {
+        res.send({ largefile: err.message, onlyImages: err });
+      } else {
+        req.user.avatar = req.file.filename;
+        await req.user.save();
+        return res.send({});
+      }
+    } catch (err) {
+      console.log(err);
     }
   });
 };
